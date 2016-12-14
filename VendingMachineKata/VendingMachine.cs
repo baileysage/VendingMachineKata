@@ -36,16 +36,29 @@ namespace VendingMachineKata
             return coinsDeposited[(int)coinType];
         }
 
-        public void InsertCoin(Coins coinType)
+        public void InsertCoin(int coinValue)
         {
-            if (coinType != Coins.INVALID)
+            switch (coinValue)
             {
-                coinsDeposited[(int)coinType]++;
+                case 5:
+                    coinsDeposited[(int)Coins.NICKELS]++;
+                    break;
+                case 10:
+                    coinsDeposited[(int)Coins.DIMES]++;
+                    break;
+                case 25:
+                    coinsDeposited[(int)Coins.QUARTERS]++;
+                    break;
+                default:
+                    coinReturn[(int)Coins.INVALID]++;
+                    break;
             }
-            else
-            {
-                coinReturn[(int)coinType]++;
-            }
+
+        }
+
+        public int coinReturnCount(Coins coinType)
+        {
+            return coinReturn[(int)coinType];
         }
     }
 }
