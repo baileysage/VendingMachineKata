@@ -24,6 +24,11 @@ namespace VendingMachineKata
         private int[] coinReturn = { 0, 0, 0, 0 };
         private float amountDeposited = 0;
 
+        public float AmountDeposited
+        {
+            get { return amountDeposited; }
+        }
+
         public VendingMachine()
         {
             pop = 10;
@@ -42,12 +47,15 @@ namespace VendingMachineKata
             {
                 case 5:
                     coinsDeposited[(int)Coins.NICKELS]++;
+                    amountDeposited += 5;
                     break;
                 case 10:
                     coinsDeposited[(int)Coins.DIMES]++;
+                    amountDeposited += 10;
                     break;
                 case 25:
                     coinsDeposited[(int)Coins.QUARTERS]++;
+                    amountDeposited += 25;
                     break;
                 default:
                     coinReturn[(int)Coins.INVALID]++;
