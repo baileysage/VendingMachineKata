@@ -1,14 +1,28 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using VendingMachineKata;
 
 namespace TestVendingMachine
 {
     [TestClass]
-    public class UnitTest1
+    public class TestVendingMachine
     {
-        [TestMethod]
-        public void TestMethod1()
+        VendingMachine testMachine;
+
+        [TestInitialize]
+        public void SetupVendingMachine()
         {
+            testMachine = new VendingMachine();
         }
+
+        [TestMethod]
+        public void TestInsertNickel()
+        {
+            var preAmount = testMachine.coinCount(Coins.NICKELS);
+            testMachine.InsertCoin(Coins.NICKELS);
+            Assert.AreEqual(testMachine.coinCount(Coins.NICKELS) - 1, preAmount);
+        }
+
+
     }
 }
