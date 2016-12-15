@@ -29,9 +29,7 @@ namespace VendingMachineKata
         public const string PRICE = "PRICE";
         public const string EXACT_CHANGE_ONLY = "EXACT CHANGE ONLY";
 
-        public const float POP_PRICE = 1.00F;
-        public const float CHIP_PRICE = 0.50F;
-        public const float CANDY_PRICE = 0.65F;
+        private float[] PRICES = { 1.00F, 0.50F, 0.65F };
 
         private int[] productsAvailable = { 10, 10, 10 };
         private int[] coinsAvailable = { 10, 10, 10 };
@@ -100,36 +98,36 @@ namespace VendingMachineKata
                     switch (SelectedProduct)
                     {
                         case Products.POP:
-                            if (amountDeposited >= POP_PRICE)
+                            if (amountDeposited >= PRICES[(int)Products.POP])
                             {
                                 Vend(Products.POP);
                                 displayString = THANK_YOU;
                             }
                             else
                             {
-                                displayString = PRICE + " $" + POP_PRICE.ToString("#0.00");
+                                displayString = PRICE + " $" + PRICES[(int)Products.POP].ToString("#0.00");
                             }
                             break;
                         case Products.CHIPS:
-                            if (amountDeposited >= CHIP_PRICE)
+                            if (amountDeposited >= PRICES[(int)Products.CHIPS])
                             {
                                 Vend(Products.CHIPS);
                                 displayString = THANK_YOU;
                             }
                             else
                             {
-                                displayString = PRICE + " $" + CHIP_PRICE.ToString("#0.00");
+                                displayString = PRICE + " $" + PRICES[(int)Products.CHIPS].ToString("#0.00");
                             }
                             break;
                         case Products.CANDY:
-                            if (amountDeposited >= POP_PRICE)
+                            if (amountDeposited >= PRICES[(int)Products.CANDY])
                             {
                                 Vend(Products.CANDY);
                                 displayString = THANK_YOU;
                             }
                             else
                             {
-                                displayString = PRICE + " $" + CANDY_PRICE.ToString("#0.00");
+                                displayString = PRICE + " $" + PRICES[(int)Products.CANDY].ToString("#0.00");
                             }
                             break;
                     }
@@ -162,8 +160,20 @@ namespace VendingMachineKata
             if (productsAvailable[(int)product] == 0)
                 throw new Exception();
             productsAvailable[(int)product]--;
+            var changeAmount = amountDeposited - PRICES[(int)product];
+            while (changeAmount > 0.25)
+                changeAmount -= 0.25F;
+                coinReturn[(int)Coins.QUARTER]++;
+            while (changeAmount > 0.10)
+                changeAmount -= 0.10F;
+                coinReturn[(int)Coins.DIME]++;
+            while (changeAmount > 0.05)
+                changeAmount -= 0.05F;
+                coinReturn[(int)Coins.NICKEL]++;
+            for (int i = 0; i < 3; i++)
+                coinsDeposited[i] = 0;
             amountDeposited = 0;
-            //TODO: make change and write some freaking tests for all o' this. 
+            //TODO: update amounts of available coins
         }
 
         public int CoinReturnCount(Coins coinType)
@@ -183,6 +193,12 @@ namespace VendingMachineKata
         {
             SelectedProduct = product;
             UpdateDisplay();
+        }
+
+        public void ClearCoinReturn()
+        {
+            for (int i = 0; i < 4; i++)
+                coinReturn[i] = 0;
         }
     }
 }

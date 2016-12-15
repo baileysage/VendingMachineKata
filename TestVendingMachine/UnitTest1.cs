@@ -77,5 +77,16 @@ namespace TestVendingMachine
             testMachine.SelectProduct(Products.CHIPS);
             Assert.AreEqual("THANK YOU", testMachine.DisplayString);
         }
+
+        [TestMethod]
+        public void TestGetChange()
+        {
+            testMachine.ClearCoinReturn();
+            for (int i = 0; i < 3; i++ )
+                testMachine.InsertCoin(25);
+            testMachine.SelectProduct(Products.CANDY);
+            Assert.AreEqual("THANK YOU", testMachine.DisplayString);
+            Assert.AreEqual(1, testMachine.CoinReturnCount(Coins.DIME));
+        }
     }
 }
