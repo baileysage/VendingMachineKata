@@ -22,7 +22,7 @@ namespace TestVendingMachine
             var preAmount = testMachine.AmountDeposited;
             testMachine.InsertCoin(5);
             Assert.AreEqual(preCount, testMachine.CoinCount(Coins.NICKEL) - 1);
-            Assert.AreEqual(preAmount, testMachine.AmountDeposited - 5);
+            Assert.AreEqual(preAmount, testMachine.AmountDeposited - 0.05F);
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ namespace TestVendingMachine
             var preAmount = testMachine.AmountDeposited;
             testMachine.InsertCoin(10);
             Assert.AreEqual(preCount, testMachine.CoinCount(Coins.DIME) - 1);
-            Assert.AreEqual(preAmount, testMachine.AmountDeposited - 10);
+            Assert.AreEqual(preAmount, testMachine.AmountDeposited - 0.10F);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace TestVendingMachine
             var preAmount = testMachine.AmountDeposited;
             testMachine.InsertCoin(25);
             Assert.AreEqual(preCount, testMachine.CoinCount(Coins.QUARTER) - 1);
-            Assert.AreEqual(preAmount, testMachine.AmountDeposited - 25);
+            Assert.AreEqual(preAmount, testMachine.AmountDeposited - 0.25F);
         }
 
         [TestMethod]
@@ -67,5 +67,15 @@ namespace TestVendingMachine
             Assert.AreEqual(1, testMachine.CoinReturnCount(Coins.QUARTER));
         }
 
+        [TestMethod]
+        public void TestVending()
+        {
+            testMachine.InsertCoin(25);
+            testMachine.SelectProduct(Products.CHIPS);
+            Assert.AreEqual("PRICE $0.50", testMachine.DisplayString);
+            testMachine.InsertCoin(25);
+            testMachine.SelectProduct(Products.CHIPS);
+            Assert.AreEqual("THANK YOU", testMachine.DisplayString);
+        }
     }
 }

@@ -17,7 +17,8 @@ namespace VendingMachineKata
     {
         POP,
         CHIPS,
-        CANDY
+        CANDY,
+        UNSET
     }
 
     public class VendingMachine
@@ -26,6 +27,7 @@ namespace VendingMachineKata
         public const string THANK_YOU = "THANK YOU";
         public const string SOLD_OUT = "SOLD OUT";
         public const string PRICE = "PRICE";
+        public const string EXACT_CHANGE_ONLY = "EXACT CHANGE ONLY";
 
         public const float POP_PRICE = 1.00F;
         public const float CHIP_PRICE = 0.50F;
@@ -48,9 +50,11 @@ namespace VendingMachineKata
             get { return displayString; }
         }
 
+        public Products SelectedProduct { get; set; }
+
         public VendingMachine()
         {
-            displayString = "INSERT COIN";
+            displayString = INSERT_COIN;
         }
 
         public int CoinCount(Coins coinType)
@@ -64,33 +68,102 @@ namespace VendingMachineKata
             {
                 case 5:
                     coinsDeposited[(int)Coins.NICKEL]++;
-                    amountDeposited += 5;
+                    amountDeposited += 0.05F;
                     break;
                 case 10:
                     coinsDeposited[(int)Coins.DIME]++;
-                    amountDeposited += 10;
+                    amountDeposited += 0.10F;
                     break;
                 case 25:
                     coinsDeposited[(int)Coins.QUARTER]++;
-                    amountDeposited += 25;
+                    amountDeposited += 0.25F;
                     break;
                 default:
                     coinReturn[(int)Coins.INVALID]++;
                     break;
             }
+            SelectedProduct = Products.UNSET;
             UpdateDisplay();
         }
 
         private void UpdateDisplay()
         {
-            if (amountDeposited > 0)
+            if (SelectedProduct != Products.UNSET)
             {
-                displayString = "$" + amountDeposited.ToString();
+                if (productsAvailable[(int)SelectedProduct] == 0)
+                {
+                    displayString = SOLD_OUT;
+                    SelectedProduct = Products.UNSET;
+                }
+                else
+                {
+                    switch (SelectedProduct)
+                    {
+                        case Products.POP:
+                            if (amountDeposited >= POP_PRICE)
+                            {
+                                Vend(Products.POP);
+                                displayString = THANK_YOU;
+                            }
+                            else
+                            {
+                                displayString = PRICE + " $" + POP_PRICE.ToString("#0.00");
+                            }
+                            break;
+                        case Products.CHIPS:
+                            if (amountDeposited >= CHIP_PRICE)
+                            {
+                                Vend(Products.CHIPS);
+                                displayString = THANK_YOU;
+                            }
+                            else
+                            {
+                                displayString = PRICE + " $" + CHIP_PRICE.ToString("#0.00");
+                            }
+                            break;
+                        case Products.CANDY:
+                            if (amountDeposited >= POP_PRICE)
+                            {
+                                Vend(Products.CANDY);
+                                displayString = THANK_YOU;
+                            }
+                            else
+                            {
+                                displayString = PRICE + " $" + CANDY_PRICE.ToString("#0.00");
+                            }
+                            break;
+                    }
+
+                }
+                SelectedProduct = Products.UNSET;
             }
             else
             {
-                displayString = "INSERT COIN";
+                if (amountDeposited > 0)
+                {
+                    displayString = "$" + amountDeposited.ToString("#0.00");
+                }
+                else
+                {
+                    if (coinsAvailable[(int)Coins.NICKEL] == 0)
+                    {
+                        displayString = EXACT_CHANGE_ONLY;
+                    }
+                    else
+                    {
+                        displayString = INSERT_COIN;
+                    }
+                }
             }
+        }
+
+        private void Vend(Products product)
+        {
+            if (productsAvailable[(int)product] == 0)
+                throw new Exception();
+            productsAvailable[(int)product]--;
+            amountDeposited = 0;
+            //TODO: make change and write some freaking tests for all o' this. 
         }
 
         public int CoinReturnCount(Coins coinType)
@@ -103,6 +176,13 @@ namespace VendingMachineKata
             coinReturn[(int)Coins.NICKEL] += coinsDeposited[(int)Coins.NICKEL];
             coinReturn[(int)Coins.DIME] += coinsDeposited[(int)Coins.DIME];
             coinReturn[(int)Coins.QUARTER] += coinsDeposited[(int)Coins.QUARTER];
+            SelectedProduct = Products.UNSET;
+        }
+
+        public void SelectProduct(Products product)
+        {
+            SelectedProduct = product;
+            UpdateDisplay();
         }
     }
 }
